@@ -1,0 +1,44 @@
+name: Deploy to GitHub Pages (CD)
+
+# Set the event (trigger)
+on:
+  push:
+    branches: [ "release" ] # Runs only on pushes to 'main'
+
+# Allow this workflow to write to your repo's GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Define the jobs
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Check out your repository's code
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      # 2. Set up the Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # 4. Build your static site
+      - name: Build project
+        run: npm run build
+
+      # 5. Use a popular pre-built action to deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GHP_TOKEN }}
+          # This is the folder your 'npm run build' command created
+          publish_dir: ./build 
+          # Use ./dist if your project builds to a 'dist' folder
