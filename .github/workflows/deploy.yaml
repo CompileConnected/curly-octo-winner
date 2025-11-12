@@ -12,6 +12,11 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+
 # Define the jobs
 jobs:
   build:
@@ -26,20 +31,33 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       # 3. Install dependencies
       - name: Install dependencies
         run: npm install
+      
+      - name: Setup Pages
+        id: setup_pages
+        uses: actions/configure-pages@v5
 
       # 4. Build your static site
       - name: Build project
         run: npm run build
+        env:
+          PAGES_BASE_PATH: ${{ steps.setup_pages.outputs.base_path }}
 
-      # 5. Use a popular pre-built action to deploy to GitHub Pages
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GHP_TOKEN }}
-          # This is the folder your 'npm run build' command created
-          publish_dir: ./build 
-          # Use ./dist if your project builds to a 'dist' folder
+          path: ./out
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
