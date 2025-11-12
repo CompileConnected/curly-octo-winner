@@ -5,6 +5,7 @@ on:
   push:
     branches: [ "release" ] # Runs only on pushes to 'main'
 
+
 # Allow this workflow to write to your repo's GitHub Pages
 permissions:
   contents: read
