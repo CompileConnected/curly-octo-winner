@@ -14,7 +14,7 @@ permissions:
 
 # Define the jobs
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       # 1. Check out your repository's code
