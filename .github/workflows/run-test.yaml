@@ -1,0 +1,28 @@
+name: Run Tests (CI)
+
+on:
+  pull_request:
+    branches: [ "main" ] # Runs on PRs targeting 'main'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Check out your repository's code
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      # 2. Set up the Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20 # Use Node.js version 20
+
+      # 3. Install your project's dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # 4. Run your tests (defined in package.json)
+      - name: Run tests
+        run: npm test
